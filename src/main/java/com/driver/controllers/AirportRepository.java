@@ -143,11 +143,13 @@ public class AirportRepository {
 
     public int getNumberOfPeopleOn(Date date, String airportName) {
         int ans = 0;
-        City city = airportHashMap.get(airportName).getCity();
-        for(Integer flightId : ticketHashMap.keySet()){
-            Flight flight = flightHashMap.get(flightId);
-            if(flight.getFlightDate().equals(date) && (flight.getToCity().equals(city) || flight.getFromCity().equals(city))){
-                ans += ticketHashMap.get(flightId).size();
+        if(airportHashMap.containsKey(airportName)) {
+            City city = airportHashMap.get(airportName).getCity();
+            for (Integer flightId : ticketHashMap.keySet()) {
+                Flight flight = flightHashMap.get(flightId);
+                if (flight.getFlightDate().equals(date) && (flight.getToCity().equals(city) || flight.getFromCity().equals(city))) {
+                    ans += ticketHashMap.get(flightId).size();
+                }
             }
         }
         return ans;
