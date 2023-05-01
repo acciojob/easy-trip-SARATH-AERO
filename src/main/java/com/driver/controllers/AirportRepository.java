@@ -49,8 +49,13 @@ public class AirportRepository {
 
     public String getAirportNameFromFlightId(Integer flightId) {
         for(Flight flight : flightHashMap.values()){
-            if(flight.getFlightId() == flightId)
-                return flight.getFromCity().toString();
+            if(flight.getFlightId() == flightId) {
+                City city = flight.getFromCity();
+                for (Airport airport : airportHashMap.values()) {
+                    if (airport.getCity().equals(city))
+                        return airport.getAirportName();
+                }
+            }
         }
         return null;
     }
@@ -71,8 +76,12 @@ public class AirportRepository {
             list.add(passengerId);
             ticketHashMap.put(flightId, list);
             return "SUCCESS";
+        }else {
+            List<Integer> list = new ArrayList<>();
+            list.add(passengerId);
+            ticketHashMap.put(flightId, list);
+            return "SUCCESS";
         }
-         return "FAILURE";
     }
 
     public String cancelATicket(Integer flightId, Integer passengerId) {
@@ -80,7 +89,7 @@ public class AirportRepository {
             boolean removed = false;
             List<Integer> list = ticketHashMap.get(flightId);
             for(Integer i : list){
-                if(i == passengerId){
+                if(i.equals(passengerId)){
                     list.remove(i);
                     removed = true;
                 }
@@ -120,19 +129,23 @@ public class AirportRepository {
     }
 
     public int calculateRevenueOfAFlight(Integer flightId) {
-        int count = ticketHashMap.get(flightId).size();
-        int revenue = 0;
-        for(int i=0; i<5; i++){
-            revenue += 3000 + (i * 50);
+        if(ticketHashMap.containsKey(flightId)) {
+            int count = ticketHashMap.get(flightId).size();
+            int revenue = 0;
+            for (int i = 0; i < 5; i++) {
+                revenue += 3000 + (i * 50);
+            }
+            return revenue;
         }
-        return revenue;
+        return 0;
     }
 
     public int getNumberOfPeopleOn(Date date, String airportName) {
         int ans = 0;
+        City city = airportHashMap.get(airportName).getCity();
         for(Integer flightId : ticketHashMap.keySet()){
             Flight flight = flightHashMap.get(flightId);
-            if(flight.getFromCity().equals(airportName) || flight.getToCity().equals(airportName)){
+            if(flight.getFlightDate().equals(date)&& (flight.getToCity().equals(city) && flight.getFromCity().equals(city))){
                 ans += ticketHashMap.get(flightId).size();
             }
         }
