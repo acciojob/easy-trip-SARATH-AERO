@@ -87,16 +87,17 @@ public class AirportRepository {
     public String cancelATicket(Integer flightId, Integer passengerId) {
         if(ticketHashMap.containsKey(flightId)){
             boolean removed = false;
-            List<Integer> list = ticketHashMap.get(flightId);
-            for(Integer i : list){
-                if(i.equals(passengerId)){
-                    list.remove(i);
+            List<Integer> passengerList = ticketHashMap.get(flightId);
+            if(passengerList == null)
+                return "FAILURE";
+                if(passengerList.contains(passengerId)){
+                    passengerList.remove(passengerId);
                     removed = true;
                 }
-            }
-            ticketHashMap.put(flightId, list);
-            if(removed)
+            if(removed) {
+                ticketHashMap.put(flightId, passengerList);
                 return "SUCCESS";
+            }
             else
                 return "FAILURE";
         }
@@ -132,7 +133,7 @@ public class AirportRepository {
         if(ticketHashMap.containsKey(flightId)) {
             int count = ticketHashMap.get(flightId).size();
             int revenue = 0;
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < count; i++) {
                 revenue += 3000 + (i * 50);
             }
             return revenue;
@@ -145,7 +146,7 @@ public class AirportRepository {
         City city = airportHashMap.get(airportName).getCity();
         for(Integer flightId : ticketHashMap.keySet()){
             Flight flight = flightHashMap.get(flightId);
-            if(flight.getFlightDate().equals(date)&& (flight.getToCity().equals(city) && flight.getFromCity().equals(city))){
+            if(flight.getFlightDate().equals(date) && (flight.getToCity().equals(city) && flight.getFromCity().equals(city))){
                 ans += ticketHashMap.get(flightId).size();
             }
         }
